@@ -21,7 +21,7 @@ class RequestBuilderImpl(RequestBuilder):
 
     def path(self, *paths):
         for path in paths:
-            self._path_builder += path
+            self._path_builder += "/" + path
         return self
 
     def url(self, url):
@@ -62,4 +62,4 @@ class RequestBuilderImpl(RequestBuilder):
         if self._url is not None:
             self._client.delete(self._url)
         else:
-            self._client.delete(self._path_builder)
+            self._client.delete2(self._path_builder)

@@ -51,8 +51,12 @@ class Client:
         return Client.PagingIterator(clazz, self.get_url(path, params), self)
 
     def delete(self, url):
-        response = requests.delete(url)
+        headers = self.get_headers()
+        response = requests.delete(url, headers=headers)
         self.check_for_error_response(response, response.status_code)
+
+    def delete2(self, path):
+        self.delete(self.get_url(path, None))
 
     def request(self, method, path, params, body):
         url = self.get_url(path, params)

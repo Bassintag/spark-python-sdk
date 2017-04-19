@@ -36,13 +36,13 @@ class Client:
         self._logger = logger
 
     def post(self, clazz, path, body):
-        return self.read_json(clazz, self.request("POST", path, None, body))
+        return self.read_json(clazz, json.loads(self.request("POST", path, None, body).text))
 
     def put(self, clazz, path, body):
-        return self.read_json(clazz, self.request("PUT", path, None, body))
+        return self.read_json(clazz, json.loads(self.request("PUT", path, None, body).text))
 
     def get(self, clazz, path, params):
-        return self.read_json(clazz, self.request("GET", path, params, None))
+        return self.read_json(clazz, json.loads(self.request("GET", path, params, None).text))
 
     def list(self, clazz, url):
         return Client.PagingIterator(clazz, url, self)
@@ -114,13 +114,14 @@ class Client:
         json_object = None
         if body is not None:
             json_object = Client.write_json(body)
-        print("Executing request: url=%s, method=%s, headers=%s, body=%s" % (url, method, headers, json_object))
-        response = func(url, json=json_object, headers=headers)
+        print("Executing request: url=%s, method=%s, headers=%s, body=%s, trackingID=%s" %
+              (url, method, headers, json_object, tracking_id))
+        response = func(url, json=json_object, headers=headers, data=json_object)
         self.check_for_error_response(response, response.status_code)
         return response
 
     def get_headers(self):
-        headers = {"Content-type": "application/json"}
+        headers = {"Content-Type": "application/json"}
         if self._access_token is not None:
             authorization = self._access_token
             if not authorization.startswith("Bearer "):

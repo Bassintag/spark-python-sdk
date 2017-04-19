@@ -53,7 +53,7 @@ class Client:
     def delete(self, url):
         headers = self.get_headers()
         response = requests.delete(url, headers=headers)
-        self.check_for_error_response(response, response.status_code)
+        Client.check_for_error_response(response, response.status_code)
 
     def delete2(self, path):
         self.delete(self.get_url(path, None))
@@ -85,7 +85,7 @@ class Client:
                 body.code = self._auth_code
                 body.redirect_uri = self._redirect_uri
                 response = self.do_request(url, "POST", body)
-                response_body = Client.read_json(AccessTokenResponse, response)
+                response_body = Client.read_json(AccessTokenResponse, response.text)
                 self._access_token = response_body.access_token
                 self._refresh_token = response_body.refresh_token
                 self._auth_code = None
@@ -98,7 +98,7 @@ class Client:
                 body.refresh_token = self._refresh_token
                 body.grant_type = "refresh_token"
                 response = self.do_request(url, "POST", body)
-                response_body = Client.read_json(AccessTokenResponse, response)
+                response_body = Client.read_json(AccessTokenResponse, response.text)
                 self._access_token = response_body.access_token
                 return True
         return False
@@ -121,7 +121,7 @@ class Client:
         print("Executing request: url=%s, method=%s, headers=%s, body=%s, trackingID=%s" %
               (url, method, headers, json_object, tracking_id))
         response = func(url, json=json_object, headers=headers, data=json_object)
-        self.check_for_error_response(response, response.status_code)
+        Client.check_for_error_response(response, response.status_code)
         return response
 
     def get_headers(self):
@@ -134,7 +134,8 @@ class Client:
         headers[Client.TRACKING_ID] = str(uuid.uuid4())
         return headers
 
-    def check_for_error_response(self, connection, response_code):
+    @staticmethod
+    def check_for_error_response(connection, response_code):
         if response_code == 401:
             raise NotAuthenticatedError()
         elif response_code < 200 or response_code >= 400:
@@ -150,10 +151,11 @@ class Client:
         if params is not None:
             url_string_builder += "?"
             for param in params:
-                url_string_builder += self.encode(param[0]) + "=" + self.encode(param[1]) + "&"
+                url_string_builder += Client.encode(param[0]) + "=" + Client.encode(param[1]) + "&"
         return url_string_builder
 
-    def encode(self, value):
+    @staticmethod
+    def encode(value):
         return str(str(value).encode("utf8"))
 
     @staticmethod

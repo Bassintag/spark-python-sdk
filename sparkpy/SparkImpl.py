@@ -11,6 +11,7 @@ from Team import Team
 from TeamMembership import TeamMembership
 from Webhook import Webhook
 from Organization import Organization
+from License import License
 from Role import Role
 
 from RequestBuilderImpl import RequestBuilderImpl
@@ -45,8 +46,8 @@ class SparkImpl():
     def organizations(self):
         return RequestBuilderImpl(Organization, self._client, "/organizations")
 
-#    def licenses(self):
-#        return RequestBuilderImpl(self._client, "/licenses")
+    def licenses(self):
+        return RequestBuilderImpl(License, self._client, "/licenses")
 
     def roles(self):
         return RequestBuilderImpl(Role, self._client, "/roles")

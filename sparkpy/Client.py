@@ -155,12 +155,12 @@ class Client:
                 url_string_builder += Client.encode(param[0]) + "=" + Client.encode(param[1]) + "&"
         return url_string_builder
 
-    def paginate(self, url):
+    def paginate(self, clazz, url):
         def callback(text):
             parser = json.dumps(text)
             result = []
             for item in parser["items"]:
-                result.append(item)
+                result.append(self.read_json(clazz, item))
             return result
         return LinkedResponse(self, url, callback)
 

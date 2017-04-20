@@ -5,7 +5,6 @@
 
 import re
 
-from Client import Client
 from SparkError import SparkError
 
 
@@ -13,7 +12,7 @@ class LinkedResponse:
 
     LINK_PATTERN = re.compile(r"\\s*<(\\S+)>\\s*;\\s*rel=\"(\\S+)\",?")
 
-    def __init__(self, client: Client, url, body_creator):
+    def __init__(self, client, url, body_creator):
         self._client = client
         self._body_creator = body_creator
         self._response = None

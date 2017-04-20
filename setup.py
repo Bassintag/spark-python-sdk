@@ -7,7 +7,7 @@
 from distutils.core import setup
 
 setup(name="Sparkpy",
-      version="1.0",
+      version="1.1",
       description="Python module for consuming RESTful APIs for Cisco Spark",
       author="Bassintag",
       url="https://github.com/Bassintag551/spark-python-sdk",

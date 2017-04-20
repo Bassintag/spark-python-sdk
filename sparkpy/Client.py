@@ -7,9 +7,10 @@ import requests
 import uuid
 import json
 
-from AccessTokenRequest import AccessTokenRequest
-from AccessTokenResponse import AccessTokenResponse
 from NotAuthenticatedError import NotAuthenticatedError
+from AccessTokenResponse import AccessTokenResponse
+from AccessTokenRequest import AccessTokenRequest
+from LinkedResponse import LinkedResponse
 from SparkError import SparkError
 
 
@@ -153,6 +154,19 @@ class Client:
             for param in params:
                 url_string_builder += Client.encode(param[0]) + "=" + Client.encode(param[1]) + "&"
         return url_string_builder
+
+    def paginate(self, url):
+        def callback(text):
+            parser = json.dumps(text)
+            result = []
+            for item in parser["items"]:
+                result.append(item)
+            return result
+        return LinkedResponse(self, url, callback)
+
+    def paginate2(self, clazz, path, params):
+        url = self.get_url(path, params)
+        return self.paginate(clazz, url)
 
     @staticmethod
     def encode(value):
